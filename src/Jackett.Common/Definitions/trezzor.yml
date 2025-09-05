@@ -153,6 +153,8 @@ search:
           args: ["(?i)\\bEpizoda[\\s\\.]*(\\d+(?:-\\d+)?)\\b", "E$1"]
         - name: re_replace
           args: ["(?i)\\b(\\d+(?:-\\d+)?)[\\s\\.]*Epizoda\\b", "E$1"]
+        - name: append
+          args: "{{ if eq .Result.category \"31\" }} (CZ){{ else }}{{ end }}"
     details:
       selector: a[href^="details.php?slug="]
       attribute: href
