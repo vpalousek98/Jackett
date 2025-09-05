@@ -1,0 +1,36 @@
+# .github/workflows/docker-publish.yml
+
+name: Build and Push Docker Image
+
+# Spustí se pokaždé, když pushnete do větve 'master'
+on:
+  push:
+    branches: [ "master" ] # nebo 'main', podle vaší hlavní větve
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest # Běží na virtuálním stroji s Ubuntu
+    permissions:
+      contents: read
+      packages: write # Oprávnění pro nahrání obrazu do registru
+
+    steps:
+      # Krok 1: Stáhne kód z vašeho repozitáře
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Krok 2: Přihlásí se do GitHub Container Registry
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }} # Vaše GitHub jméno
+          password: ${{ secrets.GITHUB_TOKEN }} # Automaticky generovaný token
+
+      # Krok 3: Sestaví a nahraje Docker obraz
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: . # Použije Dockerfile z kořenového adresáře
+          push: true # Opravdu nahrát obraz
+          tags: ghcr.io/vpalousek98/jackett:latest # Název vašeho obrazu
